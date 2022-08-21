@@ -1,0 +1,44 @@
+<div class="row  px-3 mb-2 d-flex align-items-center justify-content-between">
+  <h4 class="font-weight-bold">{{translations.new_withdrawal}}</h4>
+  <i-feather name="x" class="has-event" (click)="closeModal()"></i-feather>
+</div>
+<div class="row px-2">
+  <div class="col-sm-12">
+    <app-message [message]="message?.message" [error]="message?.error"></app-message>
+    <form [formGroup]="withdrawForm">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label>{{translations.amount}}</label>
+            <input numberOnly [isMoney]="true" [validate]="withdrawCtrls.amountCtrl" formControlName="amountCtrl"
+              class="form-control" type="text" [placeholder]="translations.amount">
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="form-group position-relative">
+            <label>{{translations.withdrawal_date}}</label>
+            <input [validate]="withdrawCtrls.dateCtrl" [matDatepicker]="datepicker" [max]="todayDate"
+              (click)="datepicker.open()" formControlName="dateCtrl" class="form-control" type="text"
+              [placeholder]="translations.withdrawal_date">
+            <i-feather (click)="datepicker.open()" name="calendar" class="small-icon has-event icon-calendar">
+            </i-feather>
+            <mat-datepicker #datepicker></mat-datepicker>
+          </div>
+        </div>
+      </div>
+      <div class="row px-2 d-flex justify-content-end">
+        <div class="form-group mr-2">
+          <irpv-button [iconName]="withdrawForm?.valid ? 'check-circle' : undefined" [loading]="withdrawLoading"
+            [label]="translations.create" [className]="'btn btn-primary justify-content-center'" (onClick)="create()">
+          </irpv-button>
+        </div>
+        <div class="form-group">
+          <irpv-button (onClick)="closeModal()" [label]="translations.cancel"
+            [className]="'btn btn-secondary justify-content-center'">
+          </irpv-button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

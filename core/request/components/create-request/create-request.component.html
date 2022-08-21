@@ -1,0 +1,32 @@
+<app-message *ngIf="message" [message]="message" [error]="error"></app-message>
+<div class="row mb-2 d-flex align-items-center justify-content-between">
+  <h4 class="font-weight-bold px-2">{{translations.create_request}}</h4>
+  <i-feather name="x" class="has-event" (click)="closeModal()"></i-feather>
+</div>
+<div class="row" *ngIf="isAdmin">
+  <irpv-select [data]="userTypes" [placeholder]="translations.user_type" [isFilter]="true" [label]="'name'"
+    [value]="'value'" (onSelected)="displayUsers($event)"></irpv-select>
+  <irpv-select [data]="users" [placeholder]="translations.names" [isFilter]="true" [label]="'displayNames'"
+    [value]="'id'" (onSelected)="setUserId($event)"></irpv-select>
+</div>
+
+<irpv-parcel-fetch [isFull]="true" (parcelEvent)="receiveParcel($event)"></irpv-parcel-fetch>
+<div class="row">
+  <div
+    class="mx-2 mt-0 alert alert-success mp bg-warning-arlt border-0 fade show d-flex justify-content-between align-items-center position-relative"
+    role="alert">
+    <i-feather name="alert-circle" class="mr-2 h-icon"></i-feather>
+    <span>{{translations.fee_5000_required_request}}</span>
+  </div>
+  <div class="mr-2 buttons w-100 d-flex justify-content-end">
+    <irpv-button [loading]="isFetching" [label]="translations.submit"
+      [className]="'btn btn-primary justify-content-center'" (onClick)="createRequest()" [disabled]="!parcel || !userId"
+      *ngIf="isAdmin">
+    </irpv-button>
+
+    <irpv-button [loading]="isFetching" [label]="translations.submit"
+      [className]="'btn btn-primary justify-content-center'" (onClick)="createRequest()" [disabled]="!parcel"
+      *ngIf="!isAdmin">
+    </irpv-button>
+  </div>
+</div>

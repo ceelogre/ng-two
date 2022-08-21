@@ -1,0 +1,173 @@
+<div class="row" *ngIf="message[0]">
+  <div class="col-12">
+    <app-message [error]="message[0]?.error" [message]="message[0]?.message"></app-message>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-6 col-lg-6 col-md-8 col-sm-12">
+    <div class="card rd-13 w-100 card-sh">
+      <div class="card-widget flat">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between">
+            <h4 class="card-title ">{{translations.personal_information}}</h4>
+            <i-feather *ngIf="!editInfo" name="edit" class="has-event" (click)="editInfo = !editInfo"></i-feather>
+          </div>
+          <div class="card-content mt-3">
+            <div class="details d-flex flex-column" *ngIf="!editInfo">
+              <span *ngIf="isValuer"> <b>{{translations.valuer_id}}:</b> <span
+                  class="value text-muted">{{authUser.valuerId}}</span></span>
+              <span> <b>{{translations.first_name}}:</b> <span
+                  class="value text-muted">{{authUser.firstName}}</span></span>
+              <span> <b>{{translations.last_name}}:</b> <span class="value text-muted">{{authUser.lastName}}
+                </span></span>
+              <span> <b>{{translations.username}}:</b> <span
+                  class="value text-muted">{{authUser.username}}</span></span>
+              <span> <b>{{translations.role}}:</b> <span class="value text-muted">{{authUser.role}}</span></span>
+              <span> <b>{{translations.certification_year}}:</b> <span
+                  class="value text-muted">{{authUser.certificationYear}}</span></span>
+              <span> <b>{{translations.phone_number}}:</b> <span
+                  class="value text-muted">{{authUser.phoneNumber}}</span></span>
+              <span> <b>{{translations.national_id_passport}}:</b> <span
+                  class="value">{{authUser.nationalId}}</span></span>
+              <span> <b>{{translations.gender}}:</b> <span class="value">{{authUser.gender}}</span></span>
+              <span> <b>{{translations.date_of_birth}}:</b> <span class="value">
+                  {{authUser.dateOfBirth | date: 'dd MMM yyyy'}}
+                </span></span>
+              <span> <b>{{translations.email}}:</b> <span class="value">{{authUser.email}}</span></span>
+            </div>
+            <ng-container *ngIf="editInfo">
+              <form [formGroup]="userFormGroup">
+                <div class="row">
+
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>{{translations.national_id_passport}}</label>
+                      <input [validate]="userCtrls.nationalIdCtrl" formControlName="nationalIdCtrl" class="form-control"
+                        type="text" [placeholder]="translations.national_id_passport" maxLength="16">
+                      <app-validation-message [control]="userCtrls.nationalIdCtrl">
+                      </app-validation-message>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group position-relative">
+                      <label>{{translations.date_of_birth}}</label>
+                      <input [validate]="userCtrls.dateOfBirthCtrl" [matDatepicker]="datepicker" [max]="todayDate"
+                        (click)="datepicker.open()" formControlName="dateOfBirthCtrl" class="form-control" type="text"
+                        [placeholder]="translations.date_of_birth">
+                      <i-feather (click)="datepicker.open()" name="calendar" class="small-icon has-event icon-calendar">
+                      </i-feather>
+                      <mat-datepicker #datepicker></mat-datepicker>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>{{translations.gender}}</label>
+                      <irpv-select [placeholder]="translations.select_gender" [isFilter]="false"
+                        [isInvalid]="userCtrls.genderCtrl?.dirty && userCtrls.genderCtrl?.invalid"
+                        [selected]="authUser ? userCtrls.genderCtrl?.value : null" (onSelected)="onGenderSelect($event)"
+                        [label]="'name'" [value]="'value'" [data]="dataService.userGender">
+                      </irpv-select>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>{{translations.email}}</label>
+                      <input [validate]="userCtrls.emailCtrl" formControlName="emailCtrl" class="form-control"
+                        type="text" [placeholder]="translations.email">
+                      <app-validation-message [control]="userCtrls.emailCtrl"></app-validation-message>
+                    </div>
+                  </div>
+                </div>
+                <div class="row px-2 d-flex justify-content-between mt-3">
+                  <div class="form-group mr-2">
+                    <irpv-button [label]="translations.cancel" [className]="'btn btn-secondary justify-content-center'"
+                      (onClick)="editInfo = !editInfo">
+                    </irpv-button>
+                  </div>
+                  <div class="form-group mr-2">
+                    <irpv-button [iconName]="userFormGroup?.valid ? 'check-circle' : undefined" [loading]="userLoading"
+                      [label]="translations.update_user" [className]="'btn btn-primary justify-content-center'"
+                      (onClick)="updateUser(true)">
+                    </irpv-button>
+                  </div>
+                </div>
+              </form>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4 col-lg-6 col-md-4 col-sm-12">
+    <div class="card rd-13 card-sh">
+      <div class="card-widget flat">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between">
+            <h4 class="card-title ">{{translations.profile_picture}}</h4>
+            <i-feather name="camera" *ngIf="!photoEdit" class="has-event" (click)="fileInput.click()"></i-feather>
+            <input #fileInput (change)="handleFileInput($event.target.files)"
+              accept="image/png,image/jpeg,image/jpg,image/web" class="prof-wraper form-control" type="file"
+              id="image-upload" />
+          </div>
+          <div class="card-content mt-3">
+            <div class="profile-image d-flex justify-content-center align-items-center">
+              <div class="fill-img">
+                <img *ngIf="!profilePicture && !image" src="/assets/images/default_img.png" alt="user-image"
+                  class="rounded-circle">
+                <img *ngIf="profilePicture || image" class="rounded-circle prof-img"
+                  [src]="image ? imageUrl(image.base64StringAttachment) : profilePicture" alt="profile picture">
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end" *ngIf="image">
+              <irpv-button [loading]="userLoading" [label]="translations.save"
+                [disabled]="!image?.base64StringAttachment" [className]="'btn btn-primary justify-content-center'"
+                (onClick)="updateUser(false)">
+              </irpv-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card rd-13 w-100 card-sh">
+      <div class="card-widget flat">
+        <div class="card-body p-4">
+          <h4 class="card-title">{{translations.update_password}}</h4>
+          <div class="card-content mt-3">
+            <form [formGroup]="authFormGroup">
+              <div class="row">
+                <div class="col-12" *ngIf="message[1]">
+                  <app-message [error]="message[1]?.error" [message]="message[1]?.message"></app-message>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>{{translations.old_password}}</label>
+                    <input [validate]="authControls.oldPasswordControl" formControlName="oldPasswordControl"
+                      type="password" class="form-control" [placeholder]="translations.old_password">
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>{{translations.new_password}}</label>
+                    <input [validate]="authControls.newPasswordControl" formControlName="newPasswordControl"
+                      type="password" class="form-control" placeholder="Ex: Irpv@123">
+                    <app-validation-message [control]="authControls.newPasswordControl">
+                    </app-validation-message>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-end">
+                <div class="form-group">
+                  <irpv-button [loading]="passwordLoading" [label]="translations.submit"
+                    [disabled]="authFormGroup?.invalid" [className]="'btn btn-primary justify-content-center'"
+                    (onClick)="changePassword()">
+                  </irpv-button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

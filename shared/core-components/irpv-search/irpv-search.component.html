@@ -1,0 +1,7 @@
+<div class="filter-wrapper position-relative">
+  <form [formGroup]="inputFormGroup">
+    <input type="text" formControlName="inputCtrl" class="form-control" [class]="className + ' ' + iconPosition"
+      [placeholder]="label">
+    <i-feather name="search" class="icon-search small-icon" [class]="iconPosition"></i-feather>
+  </form>
+</div>

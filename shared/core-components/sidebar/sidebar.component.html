@@ -1,0 +1,71 @@
+<!-- ========== Left Sidebar Start ========== -->
+<div class="left-side-menu">
+
+  <!--- Sidemenu -->
+  <div id="sidebar-menu">
+
+    <ul class="metismenu" id="side-menu">
+
+      <li class="menu-title">{{translations.menu}}</li>
+
+      <li routerLinkActive="active" *ngIf="isAdmin">
+        <a routerLink="/users" (click)="close()">
+          <span> {{translations.users}} </span>
+        </a>
+      </li>
+      <li routerLinkActive="active">
+        <a routerLink="/credits" (click)="close()">
+          <span> {{translations.credits}} </span>
+        </a>
+      </li>
+
+      <li routerLinkActive="active" *ngIf="!isBailiff">
+        <a routerLink="/tokens" (click)="close()">
+          <span class="badge badge-danger float-right" *ngIf="userStats && isValuer">{{userStats.totalTickets}}</span>
+          <span> {{translations.tokens}} </span>
+        </a>
+      </li>
+
+      <li routerLinkActive="active" *ngIf="!isBailiff">
+        <a routerLink="/inspections" (click)="close()">
+          <span class="badge badge-danger float-right"
+            *ngIf="userStats?.totalInspections && isValuer">{{userStats.totalInspections
+            -
+            userStats.totalCompletedRequests}}</span>
+          <span> {{translations.inspections}} </span>
+        </a>
+      </li>
+
+      <li routerLinkActive="active">
+        <a routerLink="/requests" (click)="close()">
+          <span *ngIf="isBailiff && userStats" class="badge badge-danger float-right">{{userStats.totalJobRequests -
+            userStats.totalCompletedRequests}}</span>
+          <span *ngIf="isValuer && userStats"
+            class="badge badge-danger float-right">{{userStats.totalJobRequests}}</span>
+          <span> {{translations.requests}} </span>
+        </a>
+      </li>
+
+      <li routerLinkActive="active" *ngIf="isAdmin || isValuer">
+        <a routerLink="/reports" (click)="close()">
+          <span> {{translations.reports}} </span>
+        </a>
+      </li>
+
+      <li routerLinkActive="active" *ngIf="isAdmin">
+        <a routerLink="/withdraws" (click)="close()">
+          <span> {{translations.withdraws}} </span>
+        </a>
+      </li>
+
+    </ul>
+
+  </div>
+  <!-- End Sidebar -->
+
+  <div class="clearfix"></div>
+
+</div>
+<!-- Sidebar -left -->
+
+<!-- Left Sidebar End -->

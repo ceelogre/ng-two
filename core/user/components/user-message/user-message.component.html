@@ -1,0 +1,18 @@
+<div class="d-flex justify-content-center">
+  <i-feather name="alert-triangle" class="text-danger big-icon mr-2"></i-feather>
+  <div class="d-flex flex-column">
+    <span class="font-weight-bold"> {{translations.you_are_about_to}} {{title}} {{translations.a_user}}</span>
+    <span> {{translations.proceed_confirm}}</span>
+    <div class="d-flex justify-content-between mt-2">
+      <div class="form-group mr-2">
+        <irpv-button [label]="title" [loading]="" (onClick)="changeStatus()" [className]="'btn btn-primary justify-content-center'">
+        </irpv-button>
+      </div>
+      <div class="form-group">
+        <irpv-button (onClick)="closeModal()" [label]="translations.cancel"
+          [className]="'btn btn-secondary justify-content-center'">
+        </irpv-button>
+      </div>
+    </div>
+  </div>
+</div>

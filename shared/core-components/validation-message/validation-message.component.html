@@ -1,0 +1,26 @@
+<ng-container *ngIf="control?.dirty && control?.invalid">
+  <small *ngIf="control?.errors?.email" class="text-danger">
+    {{translations.email_error}}
+  </small>
+  <small *ngIf="control?.errors?.upi" class="text-danger">
+    {{translations.upi_error}}
+  </small>
+  <small *ngIf="control?.errors?.password" class="text-danger">
+    {{translations.pwd_error}} Ex: Irpv@123
+  </small>
+  <small *ngIf="control?.errors?.minlength !== length || control?.errors?.maxlength !== length" class="text-danger">
+    {{translations.field_must_have}}{{length}} {{translations.digits}}
+  </small>
+  <small *ngIf="control?.errors?.max" class="text-danger">
+    maximum is {{control?.errors?.max?.requiredMax | number}}
+  </small>
+  <small *ngIf="control?.errors?.min" class="text-danger">
+    minimum is {{control?.errors?.min?.requiredMin | number}}
+  </small>
+  <small *ngIf="control?.errors?.longitude" class="text-danger">
+    {{translations.longitude_error}}
+  </small>
+  <small *ngIf="control?.errors?.latitude" class="text-danger">
+    {{translations.latitude_error}}
+  </small>
+</ng-container>

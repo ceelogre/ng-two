@@ -1,0 +1,496 @@
+<ng-container *ngIf="!notFound && !pageLoading">
+  <div class="job-top d-flex align-items-center">
+    <div class="d-flex justify-content-between w-100">
+      <div class="d-flex align-items-center">
+        <h4 class="mx-2">{{translations.site_visit}}</h4>
+        <irpv-status-display [isFilter]="false" [input]="applicationState" [type]="EfilterType.APPLICATION_STATE"
+          [showActions]="false">
+        </irpv-status-display>
+        <ng-container *ngIf="!isClosed && !isAdmin">
+          <div class="draft-status border-r8 bg-secondary p-1 ml-2" *ngIf="draftLoading">
+            <i-feather name="refresh-ccw" class="small-icon mr-1"></i-feather>
+            <span>{{translations.saving_draft}}...</span>
+          </div>
+          <div class="draft-status border-r8 bg-secondary p-1 ml-2" *ngIf="!draftLoading && draft?.data">
+            <i-feather name="check-circle" class="small-icon mr-1"></i-feather>
+            <span>{{translations.everything_saved}}</span>
+          </div>
+        </ng-container>
+      </div>
+      <div class="buttons d-flex">
+        <irpv-button [label]="isClosed || isAdmin ? translations.close : translations.go_to_inspections"
+          [className]="'btn btn-secondary justify-content-center mr-2'" (onClick)="goToInspections(false)">
+        </irpv-button>
+        <ng-container *ngIf="notLocked && !isAdmin">
+          <irpv-button *ngIf="!editable" [label]="translations.edit"
+            [className]="'btn btn-secondary justify-content-center mr-2'" (onClick)="toggleEditable(true)">
+          </irpv-button>
+          <irpv-button *ngIf="!showPreview" [loading]="valuationLoading" [label]="translations.preview"
+            [className]="'btn btn-primary justify-content-center mr-2'" (onClick)="togglePreview(true)">
+          </irpv-button>
+          <irpv-button *ngIf="showPreview" [loading]="valuationLoading" [label]="translations.update"
+            [disabled]="!applicationIsValid || !certifyChecked" [className]="'btn btn-primary justify-content-center'"
+            (onClick)="createInspection()">
+          </irpv-button>
+        </ng-container>
+        <ng-container *ngIf="!isClosed && !isAdmin">
+          <irpv-button *ngIf="!showPreview && showValuationForm" [label]="translations.save_draft"
+            [disabled]="!parcel?.upi" [className]="'btn btn-secondary justify-content-center mr-2'"
+            (onClick)="createInspection(true)">
+          </irpv-button>
+          <irpv-button *ngIf="showPreview" [label]="translations.edit" [disabled]="!parcel?.upi"
+            [className]="'btn btn-secondary justify-content-center mr-2'" (onClick)="togglePreview(false)">
+          </irpv-button>
+          <irpv-button *ngIf="showPreview" [loading]="valuationLoading" [label]="translations.submit"
+            [disabled]="!certifyChecked || !applicationIsValid" [className]="'btn btn-primary justify-content-center'"
+            (onClick)="createInspection()">
+          </irpv-button>
+          <irpv-button *ngIf="!showPreview" [loading]="valuationLoading" [label]="translations.preview"
+            [className]="'btn btn-primary justify-content-center'" (onClick)="togglePreview(true)">
+          </irpv-button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div class="certify-preview row d-flex align-items-end justify-content-between w-100 mb-3"
+    *ngIf="(isAdmin || (showPreview && applicationIsValid && (!isClosed || (isClosed))))">
+    <h3 class="font-weight-bold"> {{translations.summary}}</h3>
+    <div class="d-flex mb-1" *ngIf="(!isClosed || notLocked) && !isAdmin">
+      <mat-checkbox (change)="toggleCertify()" color='primary' [checked]="certifyChecked">
+      </mat-checkbox>
+      <label class="ml-1">{{translations.certify_that}}</label>
+    </div>
+  </div>
+  <div class="certify-preview" *ngIf="isClosed && notLocked && editable"></div>
+
+  <div class="content inspection"
+    [ngClass]="{'italic-f preview': (showPreview) && (!isClosed) || (isClosed && notLocked)}">
+    <div class="container-fluid create">
+      <div class="row">
+        <div class="card w-100">
+          <div class="card-widget flat">
+            <div class="card-body p-4">
+              <app-message [message]="message" [error]="hasError"></app-message>
+              <h4 class="card-title">{{translations.property_id}}</h4>
+              <div class="card-content">
+                <irpv-parcel-fetch [hasCoordinates]="true" (geoDataEvent)="receiveCoordinates($event)"
+                  [currentGeoData]="geolocation" [inspectionLoading]="inspectionLoading" [forceEdit]="editable"
+                  [preview]="applicationState === EApplicationState.CLOSED ? true :  showPreview"
+                  [currentParcel]="applicationState !== EApplicationState.NEW ? currentSiteVisit?.parcel : null"
+                  (parcelEvent)="receiveParcel($event)"></irpv-parcel-fetch>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="isAdmin || isClosed || (geolocation?.xCoordinate && geolocation?.yCoordinate) ">
+        <div class="row" *ngIf="showValuationForm">
+          <div class="card w-100">
+            <div class="card-widget flat">
+              <div class="card-body p-4">
+                <h4 class="card-title">{{translations.valuation_category}}</h4>
+                <div class="card-content">
+                  <div class="col-xl-8 col-lg-6 col-sm-12 ml-12-">
+                    <form [formGroup]="valuationFormGroup">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.valuation_type}}</label>
+                            <irpv-select [placeholder]="translations.select_type" [isFilter]="false"
+                              [hidden]="showPreview" [selected]="draft?.data?.formData?.valuationTypeCtrl || null"
+                              [isInvalid]="valuationCtrls.valuationTypeCtrl?.dirty && valuationCtrls.valuationTypeCtrl?.invalid"
+                              (onSelected)="onValuationTypeSelected($event)" [label]="'name'" [value]="'value'"
+                              [data]="valuationDataService.valuationTypes">
+                            </irpv-select>
+                            <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                              [ngTemplateOutletContext]="{value: valuationCtrls.valuationTypeCtrl.value | valuationFilter}">
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.property_type}}</label>
+                            <irpv-select [placeholder]="translations.select_type" [isFilter]="false"
+                              [hidden]="showPreview" [selected]="draft?.data?.formData?.propertyTypeCtrl || null"
+                              [isInvalid]="valuationCtrls.propertyTypeCtrl?.dirty && valuationCtrls.propertyTypeCtrl?.invalid"
+                              (onSelected)="onPropertyTypeSelected($event)" [label]="'name'" [value]="'value'"
+                              [data]="valuationDataService.propertyTypes">
+                            </irpv-select>
+                            <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                              [ngTemplateOutletContext]="{value: valuationCtrls.propertyTypeCtrl.value | propertyFilter}">
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.valuation_method}}</label>
+                            <irpv-select [multiple]="true" [placeholder]="translations.select_method" [isFilter]="false"
+                              [hidden]="showPreview" [selected]="draft?.data?.formData?.valuationMethodCtrl || null"
+                              [isInvalid]="valuationCtrls.valuationMethodCtrl?.dirty && valuationCtrls.valuationMethodCtrl?.invalid"
+                              (onSelected)="onValuationMethodSelected($event)" [label]="'name'" [value]="'value'"
+                              [data]="valuationDataService.valuationMethods">
+                            </irpv-select>
+                            <ng-container *ngIf="showPreview">
+                              <ng-container *ngFor="let val of valuationCtrls.valuationMethodCtrl.value; let i = index"
+                                [ngTemplateOutlet]="previewValue"
+                                [ngTemplateOutletContext]="{value: val | methodFilter, index: i+1}">
+                              </ng-container>
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.property_access}}</label>
+                            <irpv-select [placeholder]="translations.select_access" [isFilter]="false"
+                              [hidden]="showPreview" [selected]="draft?.data?.formData?.propertyAccessCtrl || null"
+                              [isInvalid]="valuationCtrls.propertyAccessCtrl?.dirty && valuationCtrls.propertyAccessCtrl?.invalid"
+                              (onSelected)="onPropertyAccessSelected($event)" [label]="'name'" [value]="'value'"
+                              [data]="valuationDataService.propertyAccess">
+                            </irpv-select>
+                            <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                              [ngTemplateOutletContext]="{value: valuationCtrls.propertyAccessCtrl.value | constructionFilter: 'access'}">
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.client_names}}</label>
+                            <input textOnly [validate]="valuationCtrls.clientsNamesCtrl" [hidden]="showPreview"
+                              formControlName="clientsNamesCtrl" class="form-control" type="text"
+                              [placeholder]="translations.client_names">
+                            <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                              [ngTemplateOutletContext]="{value: valuationCtrls.clientsNamesCtrl.value}">
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group position-relative">
+                            <label>{{translations.inspection_date}}</label>
+                            <input [hidden]="showPreview" [validate]="valuationCtrls.inspectionDateCtrl"
+                              [matDatepicker]="datepicker" [max]="todayDate" (click)="datepicker.open()"
+                              formControlName="inspectionDateCtrl" class="form-control" type="text"
+                              [placeholder]="translations.inspection_date">
+                            <i-feather [hidden]="showPreview" (click)="datepicker.open()" name="calendar"
+                              class="small-icon has-event icon-calendar">
+                            </i-feather>
+                            <mat-datepicker #datepicker></mat-datepicker>
+                            <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                              [ngTemplateOutletContext]="{value: (valuationCtrls.inspectionDateCtrl.value | date: 'dd MMM yyyy') || 'N/A'}">
+                            </ng-container>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="showDetails && showValuationForm">
+          <div class="card w-100">
+            <div class="card-widget flat">
+              <div class="card-body p-4">
+                <ng-container *ngIf="valuationCtrls?.propertyTypeCtrl?.value === EPropertyType.BUILDING">
+                  <h4 class="card-title">{{translations.building_details}}</h4>
+                  <div class="card-content">
+                    <div class="col-xl-8 col-lg-6 col-sm-12 ml-12-">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.building_type}}</label>
+                            <irpv-select [placeholder]="translations.select_type" [isFilter]="false"
+                              [hidden]="showPreview" [selected]="draft?.data?.formData?.buildingTypeCtrl || null"
+                              [isInvalid]="valuationCtrls.buildingTypeCtrl?.dirty && valuationCtrls.buildingTypeCtrl?.invalid"
+                              (onSelected)="onBuildingTypeSelected($event)" [label]="'name'" [value]="'value'"
+                              [data]="valuationDataService.buildingTypes">
+                            </irpv-select>
+                            <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                              [ngTemplateOutletContext]="{value: valuationCtrls.buildingTypeCtrl.value | buildingFilter}">
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="col-sm-6" *ngIf="residencecategories?.length > 0">
+                          <div class="form-group">
+                            <label>{{translations.building_category}}</label>
+                            <irpv-select [placeholder]="translations.select_category" [isFilter]="false"
+                              [hidden]="showPreview" [selected]="draft?.data?.formData?.residenceCategoryCtrl"
+                              [isInvalid]="valuationCtrls.residenceCategoryCtrl?.dirty && valuationCtrls.residenceCategoryCtrl?.invalid"
+                              (onSelected)="onResidenceCategorySelected($event)" [label]="'name'" [value]="'value'"
+                              [data]="residencecategories">
+                            </irpv-select>
+                            <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                              [ngTemplateOutletContext]="{value: valuationCtrls.residenceCategoryCtrl.value | residenceFilter}">
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.wall_structure}}</label>
+                            <irpv-select [multiple]="true" [placeholder]="translations.select_structure"
+                              [isFilter]="false" [hidden]="showPreview"
+                              [selected]="draft?.data?.formData?.constructionPropertyCtrl || null"
+                              [isInvalid]="valuationCtrls.constructionPropertyCtrl?.dirty && valuationCtrls.constructionPropertyCtrl?.invalid"
+                              (onSelected)="onConstructionSelected($event)" [label]="'name'" [value]="'value'"
+                              [data]="valuationDataService.constructionProperties">
+                            </irpv-select>
+                            <ng-container *ngIf="showPreview">
+                              <ng-container
+                                *ngFor="let val of valuationCtrls.constructionPropertyCtrl.value; let i = index"
+                                [ngTemplateOutlet]="previewValue"
+                                [ngTemplateOutletContext]="{value: val | constructionFilter:'wall', index: i+1}">
+                              </ng-container>
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.services}}</label>
+                            <irpv-select [multiple]="true" [placeholder]="translations.select_services"
+                              [isFilter]="false" [hidden]="showPreview"
+                              [selected]="draft?.data?.formData?.buildingServiceCtrl || null"
+                              [isInvalid]="valuationCtrls.buildingServiceCtrl?.dirty && valuationCtrls.buildingServiceCtrl?.invalid"
+                              (onSelected)="onServiceSelected($event)" [label]="'name'" [value]="'value'"
+                              [data]="valuationDataService.buildingServices">
+                            </irpv-select>
+                            <ng-container *ngIf="showPreview">
+                              <ng-container *ngFor="let val of valuationCtrls.buildingServiceCtrl.value; let i = index"
+                                [ngTemplateOutlet]="previewValue"
+                                [ngTemplateOutletContext]="{value: val | constructionFilter:'service', index: i+1}">
+                              </ng-container>
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.utilities}}</label>
+                            <irpv-select [multiple]="true" [placeholder]="translations.select_utilities"
+                              [isFilter]="false" [hidden]="showPreview"
+                              [selected]="draft?.data?.formData?.buildingUtilityCtrl || null"
+                              [isInvalid]="valuationCtrls.buildingUtilityCtrl?.dirty && valuationCtrls.buildingUtilityCtrl?.invalid"
+                              (onSelected)="onUtilitySelected($event)" [label]="'name'" [value]="'value'"
+                              [data]="valuationDataService.buildingUtilities">
+                            </irpv-select>
+                            <ng-container *ngIf="showPreview">
+                              <ng-container *ngFor="let val of valuationCtrls.buildingUtilityCtrl.value; let i = index"
+                                [ngTemplateOutlet]="previewValue"
+                                [ngTemplateOutletContext]="{value: val | constructionFilter:'utility', index: i+1}">
+                              </ng-container>
+                            </ng-container>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="valuationCtrls?.propertyTypeCtrl?.value === EPropertyType.LAND">
+                  <h4 class="card-title">{{translations.land_details}}</h4>
+                  <div class="card-content">
+                    <div class="col-xl-8 col-lg-6 col-sm-12 ml-12-">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.land_category}}</label>
+                            <irpv-select [placeholder]="translations.select_category" [isFilter]="false"
+                              [hidden]="showPreview" [selected]="draft?.data?.formData?.buildingTypeCtrl || null"
+                              [isFilter]="false"
+                              [isInvalid]="valuationCtrls.buildingTypeCtrl?.dirty && valuationCtrls.buildingTypeCtrl?.invalid"
+                              (onSelected)="onLandTypeSelected($event)" [label]="'name'" [value]="'value'"
+                              [data]="valuationDataService.landTypes">
+                            </irpv-select>
+                            <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                              [ngTemplateOutletContext]="{value: valuationCtrls.buildingTypeCtrl.value | landFilter}">
+                            </ng-container>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+
+              <div class="card-body px-4 pt-0" *ngIf="valuationProperties && valuationProperties?.length > 0">
+                <h4 class="card-title">
+                  {{translations.specifications}}
+                </h4>
+                <div class="card-content">
+                  <div class="col-xl-8 col-lg-6 col-sm-12 ml-12-">
+                    <div class="row">
+                      <div class="col-sm-6" *ngFor="let prop of valuationProperties; let i = index">
+                        <app-valuation-property [preview]="showPreview" [data]="prop"
+                          [value]="draft?.data?.valuationData[prop.value]"
+                          (onChangeEvent)="receiveBuildingProp($event)">
+                        </app-valuation-property>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="showValuationForm">
+          <div class="card w-100">
+            <div class="card-widget flat">
+              <div class="card-body p-4">
+                <h4 class="card-title">{{translations.valuation_values}}</h4>
+                <div class="card-content">
+                  <form [formGroup]="valuationFormGroup">
+                    <div class="col-xl-8 col-lg-6 col-sm-12 ml-12-">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.open_market_value}}</label>
+                            <input numberOnly [isMoney]="true" [validate]="valuationCtrls.openMarketValueCtrl"
+                              [hidden]="showPreview" formControlName="openMarketValueCtrl" class="form-control"
+                              type="text" [placeholder]="translations.open_market_value">
+                            <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                              [ngTemplateOutletContext]="{value: noComma(valuationCtrls.openMarketValueCtrl?.value) | number, currency: 'RWF '}">
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.forced_sale_value}}</label>
+                            <input numberOnly [isMoney]="true" [validate]="valuationCtrls.forcedSaleValueCtrl"
+                              [hidden]="showPreview" formControlName="forcedSaleValueCtrl" class="form-control"
+                              type="text" [placeholder]="translations.forced_sale_value">
+                            <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                              [ngTemplateOutletContext]="{value: noComma(valuationCtrls.forcedSaleValueCtrl?.value) | number, currency: 'RWF '}">
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label>{{translations.insurance_value}}</label>
+                            <input numberOnly [isMoney]="true" [validate]="valuationCtrls.insuranceValueCtrl"
+                              [hidden]="showPreview" formControlName="insuranceValueCtrl" class="form-control"
+                              type="text" [placeholder]="translations.insurance_value">
+                            <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                              [ngTemplateOutletContext]="{value: noComma(valuationCtrls.insuranceValueCtrl?.value) | number, currency: 'RWF '}">
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="col-sm-6"
+                          *ngIf="valuationCtrls?.propertyTypeCtrl?.value === EPropertyType.BUILDING">
+                          <div class="form-group">
+                            <label>{{translations.land_value}}</label>
+                            <input numberOnly [isMoney]="true" [validate]="valuationCtrls.landValueCtrl"
+                              [hidden]="showPreview" formControlName="landValueCtrl" class="form-control" type="text"
+                              [placeholder]="translations.land_value">
+                            <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                              [ngTemplateOutletContext]="{value: noComma(valuationCtrls.landValueCtrl?.value) | number, currency: 'RWF '}">
+                            </ng-container>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="showValuationForm">
+          <div class="card w-100">
+            <div class="card-widget flat">
+              <div class="card-body p-4">
+                <h4 class="card-title">{{translations.images}}</h4>
+                <div class="card-content">
+                  <div class="d-flex attachment-section mr-2">
+                    <app-attachment [name]="translations.front_view" [preview]="showPreview"
+                      [isInvalid]="valuationCtrls.frontViewCtrl?.invalid && valuationCtrls.frontViewCtrl?.dirty"
+                      [currentAttachement]="this.draft?.data ? valuationCtrls.frontViewCtrl?.value : null"
+                      (attachmentEvent)="onFrontViewAttachment($event)">
+                    </app-attachment>
+                    <app-attachment [name]="translations.real_view" [preview]="showPreview"
+                      [isInvalid]="valuationCtrls.realViewCtrl?.invalid && valuationCtrls.realViewCtrl?.dirty"
+                      [currentAttachement]="this.draft?.data ? valuationCtrls.realViewCtrl?.value : null"
+                      (attachmentEvent)="onRealViewAttachment($event)">
+                    </app-attachment>
+                    <ng-container *ngIf="otherAttachmentsArr?.length > 0 && !isClosed">
+                      <app-attachment *ngFor="let att of otherAttachmentsArr; let i = index" [preview]="showPreview"
+                        [name]="'(' + (i+1) +') ' + att?.name"
+                        [currentAttachement]="this.draft?.data?.otherAttachments[i] ? otherAttachments[i] : null"
+                        (attachmentEvent)="onOtherAttachment($event, i)">
+                      </app-attachment>
+                    </ng-container>
+                    <ng-container *ngIf="otherAttachments?.length > 0 && isClosed">
+                      <app-attachment *ngFor="let att of otherAttachments; let i = index" [preview]="showPreview"
+                        [name]="'(' + (i+1) +') ' + otherAttachmentsArr[i]?.name"
+                        [currentAttachement]="this.draft?.data?.otherAttachments[i] ? otherAttachments[i] : null"
+                        (attachmentEvent)="onOtherAttachment($event, i)">
+                      </app-attachment>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="showValuationForm">
+          <div class="card w-100">
+            <div class="card-widget flat">
+              <div class="card-body p-4">
+                <h4 class="card-title">{{translations.other_observations}}</h4>
+                <form [formGroup]="valuationFormGroup">
+                  <div class="card-content">
+                    <div class="form-group">
+                      <label for="">{{translations.observation}}</label>
+                      <textarea [validate]="valuationCtrls.observationCtrl" formControlName="observationCtrl"
+                        [placeholder]="translations.enter_other_observations" [hidden]="showPreview"
+                        class="form-control w-100" rows="10"></textarea>
+                      <ng-container [ngTemplateOutlet]="previewValue" *ngIf="showPreview"
+                        [ngTemplateOutletContext]="{value: valuationCtrls.observationCtrl.value || 'N/A'}">
+                      </ng-container>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngIf="notFound">
+  <div class="content inspection" [class.preview]="showPreview">
+    <div class="container-fluid create">
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="card w-40">
+          <div class="card-widget flat">
+            <div class="card-body p-4">
+              <irpv-notfound [type]="EfilterType.NO_SITEVISIT" (onClickEvent)="goBack()"></irpv-notfound>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngIf="pageLoading">
+  <div class="content inspection" [class.preview]="showPreview">
+    <div class="container-fluid create">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <irpv-spinner [large]="true"></irpv-spinner>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+
+
+<ng-template #previewValue let-value="value" let-index="index" let-currency="currency">
+  <h4 class="font-weight-bold">
+    <ng-container *ngIf="index">{{index}}.</ng-container>
+    <ng-container *ngIf="currency"> {{currency}}</ng-container>
+    {{value || 'N/A'}}
+  </h4>
+</ng-template>

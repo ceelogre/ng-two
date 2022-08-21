@@ -1,0 +1,11 @@
+<div class="pagination" *ngIf="showPaginator && pageList?.length > 0">
+  <a class="next">
+    <i-feather *ngIf="showPrevious" (click)="onPrevious()" name="chevron-left" class="text-black small-icon has-event">
+    </i-feather>
+  </a>
+  <a *ngFor="let page of pageList" class="text-black has-event" [ngClass]="{'page-active': page === currentPage}"
+    (click)="emitEvent(page)">{{page}}</a>
+  <a class="next">
+    <i-feather (click)="onNext()" name="chevron-right" class="text-black small-icon has-event"></i-feather>
+  </a>
+</div>

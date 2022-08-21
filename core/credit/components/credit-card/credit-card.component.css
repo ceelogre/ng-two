@@ -1,0 +1,11 @@
+.balance-bg {
+  background-image: linear-gradient(to bottom, #47DED2, #22BAA6);
+}
+
+.c-rwf {
+  position: absolute;
+  right: 0.3rem;
+  font-weight: 600;
+  color: #3B3E5F;
+  opacity: 25%;
+}

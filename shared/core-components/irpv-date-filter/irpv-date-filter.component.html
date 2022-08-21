@@ -1,0 +1,13 @@
+<a class="date-filter has-event form-control position-relative" (click)="openDateDialog()"
+  [ngClass]="{'opacity-50': isDisabled}">
+  <span class="selected" *ngIf="endDate && startDate">
+    {{ startDate | date: 'dd MMM yyyy'}} - {{endDate | date: 'dd MMM yyyy'}}
+  </span>
+  <span class="selected" *ngIf="!endDate || !startDate">
+    {{translations.date}}
+  </span>
+  <i-feather *ngIf="canRefresh && endDate && startDate" name="trash-2" class="clear hasEvent text-danger"
+    (click)="$event.stopPropagation(); refresh()">
+  </i-feather>
+  <i-feather name="chevron-down" class="arrow-down"></i-feather>
+</a>

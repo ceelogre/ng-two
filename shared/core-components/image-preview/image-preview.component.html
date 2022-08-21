@@ -1,0 +1,8 @@
+<div class="row  px-2 mb-2 d-flex align-items-center justify-content-between w-100">
+  <h4 class="font-weight-bold">{{image.fileName}}</h4>
+  <i-feather name="x" class="has-event" (click)="closeModal()"></i-feather>
+</div>
+<div class="row px-2">
+  <img class="fill-a" *ngIf="image" [src]="'data:image/'+image.extension+';base64,' + image.base64StringAttachment"
+    [alt]="image.fileName">
+</div>

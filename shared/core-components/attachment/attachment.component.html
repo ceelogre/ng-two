@@ -1,0 +1,13 @@
+<div class="img-wrapper d-flex flex-column">
+  <form [formGroup]="attachmentForm">
+    <input #fileInput (change)="handleFileInput($event.target.files)" accept="image/png,image/jpeg,image/jpg,image/webp"
+      class="form-control" formControlName="inputFileCtrl" type="file" [id]="id" />
+    <div class="image-container position-relative has-event" [class.is-invalid]="isInvalid"
+      (click)="onClick(fileInput)">
+      <img *ngIf="attachment" [src]="'data:image/'+attachment.extension+';base64,' + attachment.base64StringAttachment"
+        [alt]="name">
+      <i-feather *ngIf="!attachment" name="plus-circle" class="big-icon text-primary has-event"></i-feather>
+    </div>
+  </form>
+  <span>{{name}}</span>
+</div>

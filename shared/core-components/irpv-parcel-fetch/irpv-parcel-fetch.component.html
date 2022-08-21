@@ -1,0 +1,106 @@
+<div class="col-xl-8 col-lg-6 col-sm-12 ml-12- parcel" [ngClass]="{'col-xl-12 col-lg-12': isFull}">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="d-flex flex-column">
+        <form [formGroup]="parceForm">
+          <label class="col-form-label">{{translations.upi}}</label>
+          <div class="form-group position-relative">
+            <input [validate]="parceForm?.controls?.parcelCtrl" type="text" formControlName="parcelCtrl"
+              class="form-control search" placeholder=" Ex: 1/01/01/XXXX">
+            <span class="text-muted inner">{{translations.upi}} </span>
+            <div class="ui-spinner" [ngClass]="{'ui-spinner-2': isLoading}">
+              <irpv-button *ngIf="!isLoading" (onClick)="getParcel()" [className]="'btn btn-primary parcel-c'"
+                [iconName]="'search'" [disabled]="parceForm?.invalid || preview">
+              </irpv-button>
+              <irpv-spinner *ngIf="isLoading"></irpv-spinner>
+            </div>
+            <app-validation-message [control]="parceForm?.controls?.parcelCtrl"></app-validation-message>
+          </div>
+        </form>
+        <ng-container *ngIf="parcel?.upi">
+          <div class="d-flex flex-column parcel-details" [class.preview]="preview">
+            <span><b>{{translations.location}}:</b> {{parcel.districtName}} {{parcel.sectorName}}</span>
+            <span><b>{{translations.size}}:</b> {{parcel.size}} m<sup>2</sup></span>
+            <span><b>{{translations.land_use}}:</b> {{parcel.landUse}}</span>
+            <ng-container *ngIf="!minimalInfo">
+              <span *ngIf="parcel.remainingLeaseTerm"><b>{{translations.remaining_lease_term}}:</b> {{parcel.remainingLeaseTerm}}</span>
+              <span><b>{{translations.land_owner}}:</b> {{parcel.ownerName}}</span>
+              <span><b>{{translations.owner_id}}:</b> {{parcel.ownerId}}</span>
+              <span><b>{{translations.caveat_status}}:</b> {{parcel.hasRestriction ? translations.has_caveat :
+                translations.no_caveat}}</span>
+            </ng-container>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <img *ngIf="parcel?.upi" src="/assets/images/parcel-placeholder.png" class="w-100 placeholder-img" />
+    </div>
+  </div>
+</div>
+<div class="col-12 ml-12-" *ngIf="authUser && valuationDataList?.length > 0 && !isBailiff">
+  <hr />
+  <span class="justify-content-center font-weight-bolder">{{translations.recent_evaluation}}</span>
+  <table class="valuation-counter">
+    <thead>
+      <tr>
+        <th>{{translations.date}}</th>
+        <th>{{translations.insurance_value}}</th>
+        <th>{{translations.open_market_value}}</th>
+        <th>{{translations.forced_sale_value}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let valuation of valuationDataList">
+        <td>{{valuation.createdAt | date: 'dd MMM yyyy'}}</td>
+        <td>{{valuation.insuranceValue | number}}</td>
+        <td>{{valuation.openMarketValue | number}}</td>
+        <td>{{valuation.forcedSaleValue | number}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="col-lg-6 col-sm-12 ml-12-" [class.col-lg-6]="isFull">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="d-flex not-found" *ngIf="!parcel && fetchFailed">
+        <irpv-notfound [type]="EFilterType.UPI_STATUS"></irpv-notfound>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-xl-8 col-lg-6 col-sm-12 ml-12- parcel mt-4" *ngIf="hasCoordinates">
+  <h4 class="card-title">{{translations.coordinates_details}}</h4>
+  <form [formGroup]="coordinateForm">
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label>{{translations.x_coordinate}}</label>
+          <input [validate]="coordinateControls?.longitudeCtrl" formControlName="longitudeCtrl" class="form-control"
+            type="text" [placeholder]="translations.x_coordinate">
+          <app-validation-message [control]="coordinateControls?.longitudeCtrl"></app-validation-message>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label>{{translations.y_coordinate}}</label>
+          <input [validate]="coordinateControls?.latitudeCtrl" formControlName="latitudeCtrl" class="form-control"
+            type="text" [placeholder]="translations.y_coordinate">
+          <app-validation-message [control]="coordinateControls?.latitudeCtrl"></app-validation-message>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col d-flex justify-content-end">
+        <div class="form-group">
+          <irpv-button [label]="translations.submit"
+            [disabled]="coordinateForm?.invalid || !parcel?.id || coordinatesValid" [loading]="inspectionLoading"
+            [className]="'btn btn-primary justify-content-center'" (onClick)="emitCoordinates()">
+          </irpv-button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

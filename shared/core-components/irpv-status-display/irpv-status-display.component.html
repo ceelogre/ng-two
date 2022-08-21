@@ -1,0 +1,74 @@
+<ng-container *ngIf="isFilter">
+  <irpv-select [placeholder]="'Status'" (onSelected)="emitSelected($event)" [data]="data" [label]="'name'"
+    [value]="'value'"></irpv-select>
+</ng-container>
+<div class="d-flex justify-content-end align-items-center" *ngIf="!isFilter">
+  <a *ngIf="displayRefreshPayment()" (click)="$event.stopPropagation(); refreshPayment()"
+    class="table-link text-primary mr-3">
+    <ng-container *ngIf="!loading[4]">
+      <i-feather name="refresh-ccw" class="small-icon"></i-feather>
+    </ng-container>
+    <ng-container *ngIf="loading[4]">
+      <span class="loading-status">
+        <irpv-spinner class="ml-1"></irpv-spinner>
+      </span>
+    </ng-container>
+  </a>
+  <a *ngIf="displayDownloadPdfReport()" (click)="$event.stopPropagation(); downloadSummaryDoc();"
+    class="table-link text-primary mr-3">
+    <ng-container *ngIf="!loading[0]">
+      <i-feather name="file-text" class="small-icon"></i-feather> {{translations.export}}
+    </ng-container>
+    <ng-container *ngIf="loading[0]">
+      <span class="loading-status"> {{translations.exporting}} <irpv-spinner class="ml-1"></irpv-spinner></span>
+    </ng-container>
+  </a>
+  <a *ngIf="displayDownloadReceipt()" (click)="$event.stopPropagation();downloadReceipt();"
+    class="table-link text-primary mr-3">
+    <ng-container *ngIf="!loading[1]">
+      <i-feather name="file-text" class="small-icon"></i-feather> {{translations.export}}
+    </ng-container>
+    <ng-container *ngIf="loading[1]">
+      <span class="loading-status"> {{translations.exporting}} <irpv-spinner class="ml-1"></irpv-spinner></span>
+    </ng-container>
+  </a>
+  <a *ngIf="displayValuerAction()" (click)="$event.stopPropagation(); getNewValuer()"
+    class="table-link text-primary mr-3">
+    <ng-container *ngIf="!loading[2]">
+      <i-feather name="slash" class="small-icon"></i-feather> {{translations.reject}}
+    </ng-container>
+    <ng-container *ngIf="loading[2]">
+      <span class="loading-status"> {{translations.rejecting}} <irpv-spinner class="ml-1"></irpv-spinner></span>
+    </ng-container>
+  </a>
+  <a *ngIf="displayValuerAction()" (click)="$event.stopPropagation(); approve()" class="table-link text-primary mr-3">
+    <ng-container *ngIf="!loading[3]">
+      <i-feather name="check-circle" class="small-icon"></i-feather> {{translations.approve}}
+    </ng-container>
+    <ng-container *ngIf="loading[3]">
+      <span class="loading-status"> {{translations.approving}} <irpv-spinner class="ml-1"></irpv-spinner></span>
+    </ng-container>
+  </a>
+  <a *ngIf="isReport" (click)="$event.stopPropagation(); downloadExcelReport()" class="table-link text-primary mr-13">
+    <ng-container *ngIf="!loading[5]">
+      <i-feather name="download" class="small-icon"></i-feather>
+    </ng-container>
+    <ng-container *ngIf="loading[5]">
+      <span class="loading-status">
+        <irpv-spinner class="ml-1"></irpv-spinner>
+      </span>
+    </ng-container>
+  </a>
+  <span class="custom-label text-center" [status]="input"> {{ input | statusFilter: data}} </span>
+</div>
+
+
+<!-- TODO: add reusable template -->
+<ng-template #statusTpl let-label let-loading let-loadingLabel let-icon>
+  <ng-container *ngIf="!loading">
+    <i-feather [name]="icon" class="small-icon"></i-feather> {{label}}
+  </ng-container>
+  <ng-container *ngIf="loading">
+    <span class="loading-status"> {{loadingLabel}} <irpv-spinner class="ml-1"></irpv-spinner></span>
+  </ng-container>
+</ng-template>

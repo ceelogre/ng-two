@@ -1,0 +1,50 @@
+<div class="row justify-content-center">
+  <div class="col-12">
+    <app-message *ngIf="message" [message]="message.message" [error]="message.error"></app-message>
+  </div>
+</div>
+<div class="row justify-content-between d-flex align-items-center ml-16 mb-4"
+  *ngIf="!inspectionsLoading && inspections?.length > 0">
+  <div class="col-lg-5 col-md-5 col-sm-12">
+    <div class="d-flex align-items-center justify-content-start">
+      <div class="sort-item">
+        <h4 class="font-weight-bold">{{translations.your_inspections}}</h4>
+      </div>
+      <div class="sort-item">
+        <irpv-search [label]="translations.filter_inspections" (onChange)="onSearchChange($event)"></irpv-search>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7 col-md-7 col-sm-12">
+    <div class="d-flex align-items-center justify-content-end">
+      <div class="sort-item">
+        <irpv-button (onClick)="createInspection()" [label]="translations.create_new"
+          [className]="'btn btn-primary justify-content-center'" *ngIf="!isAdmin"></irpv-button>
+      </div>
+      <div class="sort-item">
+        <irpv-date-filter [startDate]="searchForm.startDate" [endDate]="searchForm.endDate"
+          (onSubmit)="filterByDates($event)" (onRefresh)="refresh($event)">
+        </irpv-date-filter>
+      </div>
+      <div class="sort-item">
+        <irpv-status-display [isFilter]="true" [type]="inspectionsTable?.filterType"
+          (onSelected)="filterResults($event)"></irpv-status-display>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="table-responsive mt-3">
+      <irpv-table [stringFilter]="stringFilter" [isFiltering]="tableFiltering" [dataSource]="inspectionsTable"
+        [loading]="inspectionsLoading" (notFoundEvent)="onNotFoundEvent()" (onClickEvent)="onTableClickEvent($event)"
+        (onRefreshEvent)="refresh($event)">
+      </irpv-table>
+    </div>
+  </div>
+</div>
+<div class="row paginator">
+  <irpv-paginator (onPageSelect)="onPagination($event)" [dataSourceLength]="inspectionsTable?.data.length"
+    [currentPage]="inspectionsTable?.page"></irpv-paginator>
+</div>

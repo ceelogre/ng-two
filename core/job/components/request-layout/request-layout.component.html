@@ -1,0 +1,16 @@
+<div id="wrapper">
+  <mat-drawer-container>
+    <mat-drawer (closedStart)="closed()" #snav [mode]="'over'" [opened]="isOpened" [class.mobile]="isOpened">
+      <app-sidebar></app-sidebar>
+    </mat-drawer>
+    <mat-drawer-content>
+      <app-header></app-header>
+      <div class="content-page m-0 nothing p-0 position-relative">
+        <router-outlet></router-outlet>
+      </div>
+      <div class="full">
+        <app-footer></app-footer>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</div>

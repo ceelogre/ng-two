@@ -1,0 +1,119 @@
+<div class="row  px-3 mb-2 d-flex align-items-center justify-content-between">
+  <h4 class="font-weight-bold" *ngIf="!data?.user">{{translations.new_user}}</h4>
+  <h4 class="font-weight-bold" *ngIf="data?.user">{{translations.update_user}}</h4>
+  <i-feather name="x" class="has-event" (click)="closeModal()"></i-feather>
+</div>
+<div class="row px-2">
+  <div class="col-sm-12">
+    <app-message [message]="message" [error]="error"></app-message>
+    <form [formGroup]="userFormGroup">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label>{{translations.first_name}}</label>
+            <input textOnly [validate]="userCtrls.firstNameCtrl" formControlName="firstNameCtrl" class="form-control"
+              type="text" [placeholder]="translations.first_name">
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label>{{translations.last_name}}</label>
+            <input textOnly [validate]="userCtrls.lastNameCtrl" formControlName="lastNameCtrl" class="form-control"
+              type="text" [placeholder]="translations.last_name">
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label>{{translations.category}}</label>
+            <irpv-select [placeholder]="translations.select_category"
+              [selected]="data?.user ? userCtrls.roleCtrl?.value : null" [isFilter]="false"
+              [isInvalid]="userCtrls.roleCtrl?.dirty && userCtrls.roleCtrl?.invalid" (onSelected)="onRoleSelect($event)"
+              [label]="'name'" [value]="'value'" [data]="dataService.userRole">
+            </irpv-select>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label>{{translations.certification_year}}</label>
+            <input numberOnly [validate]="userCtrls.certificationYearCtrl" formControlName="certificationYearCtrl"
+              class="form-control" type="text" [placeholder]="translations.certification_year" maxlength="4"
+              minlength="4">
+            <app-validation-message [length]="4" [control]="userCtrls.certificationYearCtrl"></app-validation-message>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label>{{translations.national_id_passport}}</label>
+            <input [validate]="userCtrls.nationalIdCtrl" formControlName="nationalIdCtrl" class="form-control"
+              type="text" [placeholder]="translations.national_id_passport" maxLength="16">
+            <app-validation-message [control]="userCtrls.nationalIdCtrl"></app-validation-message>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label>{{translations.phone_number}}</label>
+            <input numberOnly [validate]="userCtrls.phoneNumberCtrl" formControlName="phoneNumberCtrl"
+              class="form-control" type="text" placeholder="Ex: 250-XXXXXXXXX" maxlength="12" minlength="12">
+            <app-validation-message [length]="12" [control]="userCtrls.phoneNumberCtrl"></app-validation-message>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group position-relative">
+            <label>{{translations.date_of_birth}}</label>
+            <input [validate]="userCtrls.dateOfBirthCtrl" [matDatepicker]="datepicker" [max]="todayDate"
+              (click)="datepicker.open()" formControlName="dateOfBirthCtrl" class="form-control" type="text"
+              [placeholder]="translations.date_of_birth">
+            <i-feather (click)="datepicker.open()" name="calendar" class="small-icon has-event icon-calendar">
+            </i-feather>
+            <mat-datepicker #datepicker></mat-datepicker>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label>{{translations.gender}}</label>
+            <irpv-select [placeholder]="translations.select_gender" [isFilter]="false"
+              [isInvalid]="userCtrls.genderCtrl?.dirty && userCtrls.genderCtrl?.invalid"
+              [selected]="data?.user ? userCtrls.genderCtrl?.value : null" (onSelected)="onGenderSelect($event)"
+              [label]="'name'" [value]="'value'" [data]="dataService.userGender">
+            </irpv-select>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label>{{translations.email}}</label>
+            <input [validate]="userCtrls.emailCtrl" formControlName="emailCtrl" class="form-control" type="text"
+              [placeholder]="translations.email">
+            <app-validation-message [control]="userCtrls.emailCtrl"></app-validation-message>
+          </div>
+        </div>
+        <div class="col-sm-6" *ngIf="data?.user">
+          <div class="form-group">
+            <label>Username</label>
+            <input [validate]="userCtrls.usernameCtrl" formControlName="usernameCtrl" class="form-control" type="text"
+                   placeholder="Username">
+            <app-validation-message [control]="userCtrls.usernameCtrl"></app-validation-message>
+          </div>
+        </div>
+      </div>
+      <div class="row px-2 d-flex justify-content-end">
+        <div class="form-group mr-2" *ngIf="data?.user">
+          <irpv-button [iconName]="userFormGroup?.valid ? 'check-circle' : undefined" [loading]="userLoading"
+            [label]="translations.update_user" [className]="'btn btn-primary justify-content-center'"
+            (onClick)="createUser(false)">
+          </irpv-button>
+        </div>
+        <div class="form-group mr-2" *ngIf="!data?.user">
+          <irpv-button [iconName]="userFormGroup?.valid ? 'check-circle' : undefined" [loading]="userLoading"
+            [label]="translations.create_new_user" [className]="'btn btn-primary justify-content-center'"
+            (onClick)="createUser()">
+          </irpv-button>
+        </div>
+        <div class="form-group">
+          <irpv-button (onClick)="closeModal()" [label]="translations.cancel"
+            [className]="'btn btn-secondary justify-content-center'">
+          </irpv-button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

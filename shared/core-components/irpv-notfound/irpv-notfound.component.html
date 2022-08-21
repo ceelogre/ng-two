@@ -1,0 +1,24 @@
+<div class="d-flex justify-content-center" *ngIf="!isFilter">
+  <div class="not-found-msg d-flex flex-column w-60">
+    <h3 class="font-weight-bold ">{{translations.nothing_found}}</h3>
+    <p class="">{{config?.msg}}</p>
+    <irpv-button *ngIf="config?.btn" (click)="emitOnClick()" [label]="config.btn"
+      [className]="'btn btn-primary justify-content-center'"></irpv-button>
+  </div>
+  <div class="not-found-img">
+    <img src="/assets/illustrations/found-nothing.svg" alt="not-found">
+  </div>
+</div>
+
+<div class="d-flex justify-content-center" *ngIf="isFilter">
+  <div class="not-found-msg d-flex flex-column w-33">
+    <h3 class="font-weight-bold ">{{translations.search_not_found}}</h3>
+    <p class="">{{translations.search_filter_msg}} </p>
+    <irpv-button (click)="emitOnClick()" [label]="translations.refresh"
+      [className]="'btn btn-primary justify-content-center'">
+    </irpv-button>
+  </div>
+  <div class="not-found-img filter">
+    <img src="/assets/illustrations/search-nothing.png" alt="not-found">
+  </div>
+</div>

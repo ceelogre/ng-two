@@ -1,0 +1,56 @@
+<div id="wrapper">
+  <app-header></app-header>
+  <div class="bottom-content">
+    <div class="login-wrapper">
+      <div class="row align-items-center justify-content-center h-100">
+        <div class="col-xl-5 col-lg-6 col-md-8 col-sm-12 pr-0">
+          <div class="card rd-13 card-sh">
+            <div class="card-body">
+              <h4 class="font-weight-bold mb-3">{{translations.valuation_request}}</h4>
+              <div class="card-content">
+                <app-message *ngIf="message" [message]="message.message" [error]="!message.error"></app-message>
+                <irpv-parcel-fetch [isFull]="true" [minimalInfo]="true" (parcelEvent)="receiveParcel($event)">
+                </irpv-parcel-fetch>
+                <div class="row">
+                  <div
+                    class="mx-2 mt-0 alert alert-success mp bg-warning-arlt border-0 fade show d-flex justify-content-between align-items-center position-relative"
+                    role="alert">
+                    <i-feather name="alert-circle" class="mr-2 h-icon"></i-feather>
+                    <span>{{translations.fee_5000_required_public}}</span>
+                  </div>
+                </div>
+                <div class="d-flex flex-column w-100">
+                  <form [formGroup]="publicFormGroup">
+                    <div class="input-item mb-2">
+                      <label>{{translations.national_id_passport}}</label>
+                      <input formControlName="nationalIDCtrl" maxlength="16" class="form-control"
+                        [placeholder]="translations.national_id_passport" [validate]="puBlicControls.nationalIDCtrl">
+                      <app-validation-message [control]="puBlicControls.nationalIDCtrl">
+                      </app-validation-message>
+                    </div>
+                    <div class="input-item mb-2">
+                      <div class="form-group">
+                        <label>{{translations.mobile_money_number}}</label>
+                        <input numberOnly formControlName="phoneCtrl" maxlength="12" minlength="12" class="form-control"
+                          placeholder="Ex: 250 XXXXXXXXXX" [validate]="puBlicControls.phoneCtrl">
+                        <app-validation-message [length]="12" [control]="puBlicControls.phoneCtrl">
+                        </app-validation-message>
+                      </div>
+                    </div>
+                    <div class="input-item mb-2 d-flex justify-content-end">
+                      <irpv-button [label]="translations.submit" [loading]="isLoading"
+                        [disabled]="!publicFormGroup?.valid || !parcel?.id"
+                        [className]="'btn btn-primary justify-content-center'" (onClick)="submit()">
+                      </irpv-button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>

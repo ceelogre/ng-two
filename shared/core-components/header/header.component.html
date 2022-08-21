@@ -1,0 +1,61 @@
+<!-- Topbar Start -->
+<div class="navbar-custom d-flex">
+  <div class="nav-logo d-flex justify-content-start align-items-center w-40">
+    <span class="mobile-menu" *ngIf="authUser">
+      <i-feather name="menu" class="text-white" (click)="openSideBar()"></i-feather>
+    </span>
+    <a class="mr-4" routerLink="/">
+      <img src="/assets/logos/logo-all.svg" alt="Indangagaciro logo">
+    </a>
+    <div class="nav-search w-40 position-relative">
+      <input type="text" class="form-control header-search" placeholder="Search anything">
+      <i-feather name="search" class="icon-search"></i-feather>
+    </div>
+  </div>
+
+  <div class="nav-right d-flex justify-content-end w-60">
+    <ul class="list-unstyled topnav-menu float-right mb-0">
+      <li class="dropdown notification-list">
+        <a class="nav-link dropdown-toggle lang-mob nav-user mr-0 waves-effect waves-light" data-toggle="dropdown"
+          href="#" role="button" aria-haspopup="false" aria-expanded="false">
+          <span class="ml-1 mr-2">
+            {{selectedLanguage?.name}} <i-feather name="chevron-down" class="small-icon"></i-feather>
+          </span>
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right profile-dropdown">
+          <!-- item-->
+          <a (click)="setLanguage(l)" class="dropdown-item notify-item has-event" *ngFor="let l of languages">
+            {{l.name}}
+          </a>
+        </div>
+      </li>
+      <li class="dropdown notification-list float-right" *ngIf="authUser">
+        <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light" data-toggle="dropdown" href="#"
+          role="button" aria-haspopup="false" aria-expanded="false">
+          <span class="pro-user-name ml-1 mr-2">
+            {{authUser.firstName}} {{authUser.lastName}}<i class="mdi mdi-chevron-down"></i>
+          </span>
+          <img *ngIf="profilePicture" [src]="profilePicture" alt="user-image" class="rounded-circle">
+          <img *ngIf="!profilePicture" src="/assets/images/default_img.png" alt="user-image" class="rounded-circle">
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+
+          <!-- item-->
+          <a routerLink="/profile" class="dropdown-item notify-item has-event">
+            <span class="text-black">{{translations.profile}}</span>
+          </a>
+
+          <div class="dropdown-divider"></div>
+
+          <!-- item-->
+          <a (click)="logout()" class="dropdown-item notify-item has-event">
+            <span class="text-black"> {{translations.logout}}</span>
+          </a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+<!-- end Topbar -->

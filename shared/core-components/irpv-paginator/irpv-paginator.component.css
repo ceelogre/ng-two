@@ -1,0 +1,19 @@
+.pagination {
+  padding: .4rem .2rem;
+  background: #F0F0F1;
+}
+
+.pagination > a {
+  padding: .4rem .6rem;
+}
+
+.pagination .next {
+  margin-top: -1px;
+}
+
+a.page-active {
+  background: #30923D;
+  border-radius: 25%;
+  color: #fff !important;
+  font-weight: bold;
+}

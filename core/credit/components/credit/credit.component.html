@@ -1,0 +1,76 @@
+<div class="row mb-4 w-100" *ngIf="message">
+  <div class="col-12">
+    <app-message [error]="message?.error" [message]="message?.message"></app-message>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-4 col-lg-6 p-0-3" *ngIf="!isAdmin">
+    <app-credit-card (refresh)="onRefresh($event)"></app-credit-card>
+  </div>
+  <div class="col-xl-8 col-lg-6" *ngIf="!isAdmin">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="d-flex align-items-center justify-content-start">
+          <div class="sort-item">
+            <h4 class="font-weight-bold">{{translations.transaction_history}}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="d-flex justify-content-end">
+          <div class="sort-item">
+            <irpv-date-filter (onSubmit)="filterByDates($event)" [startDate]="searchForm.startDate"
+              [endDate]="searchForm.endDate" (onRefresh)="refresh($event)">
+            </irpv-date-filter>
+          </div>
+          <div class="sort-item">
+            <irpv-button [loading]="exportLoading" [label]="translations.export" (onClick)="generateStatement($event)"
+              *ngIf="inspectionsTable?.data.length != 0"></irpv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive mt-3">
+      <irpv-table [isFiltering]="tableFiltering" [dataSource]="inspectionsTable" [loading]="transactionsLoading"
+        (onRefreshEvent)="refresh($event)"></irpv-table>
+    </div>
+    <div class="row paginator">
+      <irpv-paginator (onPageSelect)="onPagination($event)" [dataSourceLength]="inspectionsTable?.data.length"
+        [currentPage]="inspectionsTable?.page"></irpv-paginator>
+    </div>
+  </div>
+
+  <div class="col-12" *ngIf="isAdmin">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="d-flex align-items-center justify-content-start">
+          <div class="sort-item">
+            <h4 class="font-weight-bold">{{translations.transaction_history}}</h4>
+          </div>
+          <div class="sort-item">
+            <irpv-search [label]="translations.filter_payments" (onChange)="onSearchChange($event)"></irpv-search>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="d-flex justify-content-end">
+          <div class="sort-item">
+            <irpv-date-filter (onSubmit)="filterByDates($event)" [startDate]="searchForm.startDate"
+              [endDate]="searchForm.endDate">
+            </irpv-date-filter>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive mt-3">
+      <irpv-table [isFiltering]="tableFiltering" [dataSource]="inspectionsTable" [loading]="transactionsLoading"
+        (onRefreshEvent)="refresh($event)"></irpv-table>
+    </div>
+    <div class="row paginator">
+      <irpv-paginator (onPageSelect)="onPagination($event)" [dataSourceLength]="inspectionsTable?.data.length"
+        [currentPage]="inspectionsTable?.page"></irpv-paginator>
+    </div>
+  </div>
+</div>

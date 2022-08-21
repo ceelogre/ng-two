@@ -1,0 +1,24 @@
+<div class="filter-tab position-relative" *ngIf="!multiple && isFilter">
+  <select [(ngModel)]="selected" class="form-control" [class.is-filter]="isFilter" [class.is-invalid]="isInvalid"
+    (ngModelChange)="emitIsFilter($event)">
+    <option [ngValue]="null" [disabled]="true">{{placeholder}}</option>
+    <option *ngFor="let item of data;" [value]="item[value]">{{item[label]}}</option>
+  </select>
+  <i-feather name="chevron-down" class="arrow-down"></i-feather>
+</div>
+
+<div class="filter-tab position-relative" *ngIf="!multiple && !isFilter">
+  <ng-select #selectpl class="custom" [class.is-filter]="isFilter" [class.is-invalid]="isInvalid"
+    (change)="emitSelected($event)" [items]="data" bindLabel="name" bindValue="value" [multiple]="false"
+    [(ngModel)]="selected" [clearable]="false" appendTo="body" [placeholder]="placeholder">
+  </ng-select>
+  <i-feather name="chevron-down" class="arrow-down has-event" (click)="selectpl.open()"></i-feather>
+</div>
+
+<div class="filter-tab position-relative" *ngIf="multiple">
+  <ng-select #selectpl class="custom" (change)="emitMultiSelected($event)" [items]="data" bindLabel="name"
+    [class.is-invalid]="isInvalid" bindValue="value" [multiple]="true" [(ngModel)]="selected" [clearable]="false"
+    appendTo="body" [placeholder]="placeholder">
+  </ng-select>
+  <i-feather name="chevron-down" class="arrow-down has-event" (click)="selectpl.open()"></i-feather>
+</div>

@@ -1,0 +1,11 @@
+export enum EInspectionStatus {
+  COMPLETED = 'COMPLETED',
+  STARTED = 'STARTED',
+  TODO = 'TODO',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  NEW = 'NEW',
+  CLOSED = 'CLOSED',
+  SUCCESSFUL = 'SUCCESSFUL',
+  FAILED = 'FAILED'
+}

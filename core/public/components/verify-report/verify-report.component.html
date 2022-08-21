@@ -1,0 +1,35 @@
+<div id="wrapper">
+  <app-header></app-header>
+  <div class="bottom-content" [ngClass]="{'lg-ex': repordDoc}">
+    <div class="login-wrapper" [ngClass]="{'log-expand': repordDoc}">
+      <div class="row justify-content-center h-100">
+        <div class="col-xl-5 col-lg-6 col-md-8 col-sm-12 pr-0">
+          <div class="card rd-13 card-sh mt-10r">
+            <div class="card-body">
+              <h4 class="font-weight-bold mb-3">{{translations.report_verify}}</h4>
+              <div class="card-content">
+                <app-message *ngIf="message" [message]="message.message" [error]="!message.error"></app-message>
+                <div class="input-item mb-2 w-50">
+                  <label>{{translations.report_number}}</label>
+                  <div class="form-group position-relative">
+                    <input [(ngModel)]="reportNumber" class="form-control search" placeholder="Report numbert">
+                    <div class="ui-spinner doc" [ngClass]="{'ui-spinner-2': isLoading}">
+                      <irpv-button *ngIf="!isLoading" (onClick)="getReportDocument()"
+                        [className]="'btn btn-primary parcel-c'" [iconName]="'search'">
+                      </irpv-button>
+                      <irpv-spinner *ngIf="isLoading"></irpv-spinner>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="my-4 preview-pdf" *ngIf="repordDoc && reportNumber">
+            <pdf-viewer [src]="repordDoc"></pdf-viewer>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>

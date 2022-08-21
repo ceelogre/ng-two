@@ -1,0 +1,18 @@
+<form [formGroup]="propertyForm">
+  <div class="form-group">
+    <div class="d-flex mb-1">
+      <mat-checkbox *ngIf="!preview" (change)="onCheck()" color='primary' [checked]="checked"></mat-checkbox>
+      <label class="ml-1">{{data.name | titlecase}}</label>
+    </div>
+    <input *ngIf="!preview" [validate]="propertyForm.controls.propCtrl" formControlName="propCtrl" class="form-control"
+      type="text" [placeholder]="data.type ? translations.no : translations.ex_number_type_specify">
+    <ng-container *ngIf="!value">
+      <h3 *ngIf="preview && data.type" class="font-weight-bold">{{checked ? translations.yes : translations.no}}</h3>
+      <h3 *ngIf="preview && !data.type" class="font-weight-bold">{{checked ? propertyForm.controls.propCtrl.value :
+        'N/A'}}</h3>
+    </ng-container>
+    <ng-container *ngIf="value && preview">
+      <h3 class="font-weight-bold">{{value}}</h3>
+    </ng-container>
+  </div>
+</form>

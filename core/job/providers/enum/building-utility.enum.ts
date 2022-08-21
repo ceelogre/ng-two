@@ -1,0 +1,6 @@
+export enum EBuildingUtility {
+  WATER = 'WATER',
+  ELECTRICITY = 'ELECTRICITY',
+  TELEPHONE = 'TELEPHONE',
+  INTERNET = 'INTERNET',
+}

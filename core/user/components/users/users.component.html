@@ -1,0 +1,62 @@
+<div class="row mb-4 w-100" *ngIf="message">
+  <div class="col-12">
+    <app-message [error]="message?.error" [message]="message?.message"></app-message>
+  </div>
+</div>
+<div class="row justify-content-between ml-16 mb-4" *ngIf="usersTable?.data?.length > 0">
+  <div class="col-4">
+    <div class="d-flex align-items-center justify-content-start">
+      <div class="sort-item">
+        <h4 class="font-weight-bold">{{translations.member_list}}</h4>
+      </div>
+      <div class="sort-item">
+        <irpv-search [label]="translations.filter_users" (onChange)="onSearchChange($event)"></irpv-search>
+      </div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="d-flex align-items-center justify-content-end">
+      <div class="sort-item">
+        <span class="font-weight-bold">{{translations.sort_by}}</span>
+      </div>
+      <div class="sort-item">
+        <irpv-status-display [isFilter]="true" [type]="usersTable?.filterType" (onSelected)="filterByStatus($event)">
+        </irpv-status-display>
+      </div>
+      <div class="sort-item">
+        <irpv-button (onClick)="toggleUser(null)" [label]="translations.create_member"
+          [className]="'btn btn-primary justify-content-center'"></irpv-button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row justify-content-between ml-16 ">
+  <div class="col-4">
+    <div class="d-flex align-items-center justify-content-start" *ngIf="selectedUser">
+      <div class="sort-item">
+        <irpv-button (onClick)="toggleUser(selectedUser)" [label]="translations.edit" [iconName]="'edit-2'"
+          [className]="'btn btn-secondary justify-content-center'"></irpv-button>
+      </div>
+      <div class="sort-item" *ngIf="selectedUser?.status === EUserStatus.ACTIVE">
+        <irpv-button (onClick)="toggleWarning(selectedUser)" [label]="translations.deactivate" [iconName]="'slash'"
+          [className]="'btn btn-secondary justify-content-center'"></irpv-button>
+      </div>
+      <div class="sort-item" *ngIf="selectedUser?.status === EUserStatus.INACTIVE">
+        <irpv-button (onClick)="toggleWarning(selectedUser)" [label]="translations.reactivate"
+          [iconName]="'check-circle'" [className]="'btn btn-secondary justify-content-center'"></irpv-button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="table-responsive mt-3">
+      <irpv-table [stringFilter]="stringFilter" (onSelected)="onUserSelected($event)" [dataSource]="usersTable"
+        [loading]="usersLoading" (notFoundEvent)="toggleUser()"></irpv-table>
+    </div>
+  </div>
+</div>
+<div class="row paginator">
+  <irpv-paginator (onPageSelect)="onPagination($event)" [dataSourceLength]="usersTable?.data.length"
+    [currentPage]="usersTable?.page"></irpv-paginator>
+</div>

@@ -1,0 +1,54 @@
+<table class="table table-hover table-centered mb-0" *ngIf="dataSource?.filteredData?.length > 0 && !loading">
+  <thead>
+    <th *ngIf="dataSource?.selectable" class="selected-p"><b>#</b></th>
+    <th *ngFor="let field of dataSource?.fields; let i = index"><b>{{field?.name }}</b></th>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let row of dataSource?.filteredData; let i = index"
+      [ngClass]="{'selected': selectedIndex === i, 'has-event': dataSource?.hasAction}" (click)="onClick(row)">
+      <td *ngIf="dataSource?.selectable" class="selected-p">
+        <mat-checkbox (change)='onSelect(row, i)' color='primary'></mat-checkbox>
+      </td>
+      <td *ngFor="let col of dataSource?.fields;">
+        <ng-container *ngIf="col?.isId"> {{row[col?.key]}} </ng-container>
+        <ng-container *ngIf="col?.isDate"> {{row[col?.key] | date: 'dd MMM yyyy'}} </ng-container>
+        <ng-container *ngIf="col?.isRole"> {{row[col?.key] | roleFilter}} </ng-container>
+        <ng-container *ngIf="col?.isStatus && dataSource?.filterType && !col?.isActionable">
+          <irpv-status-display [isFilter]="false" [input]="row[col?.key]" [type]="dataSource.filterType">
+          </irpv-status-display>
+        </ng-container>
+        <ng-container *ngIf="col?.isMoney">RWF {{row[col?.key] | number}} </ng-container>
+        <ng-container *ngIf="col?.isStatus && dataSource?.filterType && col?.isActionable">
+          <irpv-status-display [isFilter]="false" [input]="row[col?.key]" [type]="dataSource.filterType" [request]="row"
+            (onError)="error($event)">
+          </irpv-status-display>
+        </ng-container>
+
+        <ng-container *ngIf="
+            !col?.isStatus &&
+            !col?.isRole &&
+            !col?.isId &&
+            !col?.isDate &&
+            !col?.isMoney">
+          {{row[col?.key] }}
+        </ng-container>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+<div class="d-flex justify-content-center align-items-center row w-100 table-loader" *ngIf="loading">
+  <irpv-spinner [large]="true"></irpv-spinner>
+</div>
+
+<div class="d-flex justify-content-center align-items-center row w-100 table-loader"
+  *ngIf="!isFiltering && (!this.dataSource || dataSource?.data.length === 0) && !loading && !notFoundHidden">
+  <irpv-notfound [type]="dataSource?.filterType" (onClickEvent)="emitToParent($event)"></irpv-notfound>
+</div>
+
+<div class="d-flex justify-content-center align-items-center row w-100 table-loader"
+  *ngIf="isFiltering && (dataSource?.data.length === 0 || dataSource?.filteredData.length === 0 ) && !loading">
+  <irpv-notfound [isFilter]="true" (onClickEvent)="emitToParent($event)"></irpv-notfound>
+</div>

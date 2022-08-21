@@ -1,0 +1,12 @@
+<div class="row">
+  <h4 class="font-weight-bold"> {{data?.message}}</h4>
+  <p> If you want to process click yes </p>
+</div>
+<div class="row d-flex justify-content-between">
+  <button class="btn w-40 btn-danger" (click)="dismiss(false)">
+    No
+  </button>
+  <button class="btn w-40 btn-primary" (click)="dismiss(true)">
+    Yes
+  </button>
+</div>

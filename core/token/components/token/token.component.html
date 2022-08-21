@@ -1,0 +1,70 @@
+<div class="row justify-content-center">
+  <div class="col-12">
+    <app-message *ngIf="message" [message]="message.message" [error]="message.error"></app-message>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-4 col-lg-6 p-0-3" *ngIf="!isAdmin">
+    <app-token-card (refresh)="onRefresh($event)"></app-token-card>
+  </div>
+  <div class="col-xl-8 col-lg-6" *ngIf="!isAdmin">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="d-flex align-items-center justify-content-start">
+          <div class="sort-item">
+            <h4 class="font-weight-bold">{{translations.transaction_history}}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="d-flex justify-content-end">
+          <div class="sort-item">
+            <irpv-date-filter (onSubmit)="filterByDates($event)" [startDate]="searchForm.startDate"
+              [endDate]="searchForm.endDate" (onRefresh)="refresh($event)">
+            </irpv-date-filter>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive mt-3">
+      <irpv-table [isFiltering]="tableFiltering" [dataSource]="tokensTable" [loading]="tokensLoading"
+        (onRefreshEvent)="refresh($event)"></irpv-table>
+    </div>
+    <div class="row paginator">
+      <irpv-paginator (onPageSelect)="onPagination($event)" [dataSourceLength]="tokensTable?.data.length"
+        [currentPage]="tokensTable?.page"></irpv-paginator>
+    </div>
+  </div>
+
+  <div class="col-12" *ngIf="isAdmin">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="d-flex align-items-center justify-content-start">
+          <div class="sort-item">
+            <h4 class="font-weight-bold">{{translations.transaction_history}}</h4>
+          </div>
+          <div class="sort-item">
+            <irpv-search [label]="translations.filter_tokens" (onChange)="onSearchChange($event)"></irpv-search>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="d-flex justify-content-end">
+          <div class="sort-item">
+            <irpv-date-filter (onSubmit)="filterByDates($event)" [startDate]="searchForm.startDate"
+              [endDate]="searchForm.endDate">
+            </irpv-date-filter>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive mt-3">
+      <irpv-table [isFiltering]="tableFiltering" [dataSource]="tokensTable" [loading]="tokensLoading"
+        (onRefreshEvent)="refresh($event)"></irpv-table>
+    </div>
+    <div class="row paginator">
+      <irpv-paginator (onPageSelect)="onPagination($event)" [dataSourceLength]="tokensTable?.data.length > 0"
+        [currentPage]="tokensTable?.page"></irpv-paginator>
+    </div>
+  </div>
+</div>

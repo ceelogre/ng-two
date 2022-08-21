@@ -1,0 +1,33 @@
+.filter-wrapper .form-control::placeholder {
+  color: #3B3E5F !important;
+}
+
+.filter-wrapper .form-control::-moz-placeholder {
+  color: #3B3E5F !important;
+}
+
+.filter-wrapper .form-control::-webkit-input-placeholder {
+  color: #3B3E5F !important;
+}
+
+.filter-wrapper .icon-search{
+  color: #607D8B !important;
+  top: 25% !important;;
+}
+
+.filter-wrapper .icon-search.right{
+  right: 5%;
+}
+
+.filter-wrapper .icon-search.left{
+  left: 5%;
+}
+
+.filter-wrapper .form-control.left {
+  padding-left: 2rem;
+}
+
+.filter-wrapper .form-control.right {
+  padding-right: 2rem;
+}
+

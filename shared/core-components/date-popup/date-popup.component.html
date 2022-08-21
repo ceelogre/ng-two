@@ -1,0 +1,26 @@
+<div class="row  px-2 mb-2 d-flex align-items-center justify-content-between">
+  <h4 class="font-weight-bold">{{translations.select_date}}</h4>
+  <i-feather name="x" class="has-event" (click)="closeModal()"></i-feather>
+</div>
+<div class="row px-2">
+  <form [formGroup]="selectFormGroup">
+    <div class="d-flex align-items-center justify-content-between filter">
+      <div class="form-group position-relative mr-2">
+        <input [matDatepicker]="startDatepicker" (click)="startDatepicker.open()" [max]="endDate"
+          formControlName="startDateCtrl" class="form-control matStartDate" type="text"
+          [placeholder]="translations.start_date">
+        <i-feather (click)="startDatepicker.open()" name="calendar" class="small-icon has-event icon-calendar">
+        </i-feather>
+        <mat-datepicker #startDatepicker></mat-datepicker>
+      </div>
+      <div class="form-group position-relative mr-2">
+        <input [matDatepicker]="endDatepicker" (click)="endDatepicker.open()" [min]="startDate" [max]="todayDate"
+          formControlName="endDateCtrl" class="form-control matEndDate" type="text"
+          [placeholder]="translations.end_date">
+        <i-feather (click)="endDatepicker.open()" name="calendar" class="small-icon has-event icon-calendar">
+        </i-feather>
+        <mat-datepicker #endDatepicker></mat-datepicker>
+      </div>
+    </div>
+  </form>
+</div>

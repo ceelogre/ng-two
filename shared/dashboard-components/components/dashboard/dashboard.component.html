@@ -1,0 +1,98 @@
+<div class="dashboard-profile d-flex">
+  <div class="profile-card d-flex mr-3 w-25">
+    <div class="profile-image">
+      <img *ngIf="!profilePicture" src="/assets/images/default_img.png" alt="user-image" class="rounded-circle">
+      <img *ngIf="profilePicture" [src]="profilePicture" alt="user-image" class="rounded-circle">
+    </div>
+    <div class="d-flex flex-column justify-content-center ml-3">
+      <div class="name">
+        <h4 class="font-weight-bold">{{user?.firstName}} {{user?.lastName}}</h4>
+      </div>
+      <div class="sub-name d-flex" *ngIf="isValuer">
+        <span> <img src="/assets/images/verified.png" alt="verified"> {{translations.VALUER}}</span>
+      </div>
+      <div class="sub-name d-flex" *ngIf="isBailiff">
+        <span> <img src="/assets/images/verified.png" alt="verified"> {{translations.BAILIFF}}</span>
+      </div>
+      <div class="sub-name d-flex" *ngIf="isAdmin">
+        <span> <img src="/assets/images/verified.png" alt="verified"> {{translations.ADMIN}}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-separator mr-3">
+    &nbsp;
+  </div>
+  <div class="dashboard-card d-flex align-items-center">
+    <div class="stat-item d-flex">
+      <div class="stat-icon bg-primary">
+        <i-feather name="activity" class="small-icon">
+        </i-feather>
+      </div>
+      <div class="stat-body d-flex flex-column" *ngIf="isValuer">
+        <span>{{translations.valued_properties}}</span>
+        <b>{{userStatistics?.totalCompletedRequests}}</b>
+      </div>
+      <div class="stat-body d-flex flex-column" *ngIf="isAdmin">
+        <span>{{translations.total_inspections}}</span>
+        <b>{{userStatistics?.totalInspections}}</b>
+      </div>
+      <div class="stat-body d-flex flex-column" *ngIf="isBailiff">
+        <span>{{translations.posted_requests}}</span>
+        <b>{{userStatistics?.totalJobRequests}}</b>
+      </div>
+    </div>
+
+    <div class="stat-item d-flex">
+      <div class="stat-icon bg-success">
+        <i-feather name="activity" class="small-icon">
+        </i-feather>
+      </div>
+      <div class="stat-body d-flex flex-column" *ngIf="isValuer || isAdmin">
+        <span>{{translations.pending_tokens}}</span>
+        <b>{{userStatistics?.totalTickets}}</b>
+      </div>
+      <div class="stat-body d-flex flex-column" *ngIf="isBailiff">
+        <span>{{translations.completed_requests}}</span>
+        <b>{{userStatistics?.totalCompletedRequests}}</b>
+      </div>
+    </div>
+
+    <div class="stat-item d-flex">
+      <div class="stat-icon bg-warning">
+        <i-feather name="activity" class="small-icon">
+        </i-feather>
+      </div>
+      <div class="stat-body d-flex flex-column" *ngIf="!isAdmin">
+        <span>{{translations.credit_balance}}</span>
+        <b>RWF {{userStatistics?.balance | number}}</b>
+      </div>
+      <div class="stat-body d-flex flex-column" *ngIf="isAdmin">
+        <span>{{translations.total_revenues}}</span>
+        <b>RWF {{userStatistics?.balance | number}}</b>
+      </div>
+    </div>
+    <ng-container *ngIf="isAdmin">
+      <div class="stat-item d-flex">
+        <div class="stat-icon bg-danger">
+          <i-feather name="activity" class="small-icon">
+          </i-feather>
+        </div>
+        <div class="stat-body d-flex flex-column" *ngIf="isAdmin">
+          <span>{{translations.total_withdraws}}</span>
+          <b>RWF {{userStatistics?.totalWithdraws || 0 | number}}</b>
+        </div>
+      </div>
+      <div class="stat-item d-flex">
+        <div class="stat-icon bg-dark">
+          <i-feather name="activity" class="small-icon">
+          </i-feather>
+        </div>
+        <div class="stat-body d-flex flex-column" *ngIf="isAdmin">
+          <span>{{translations.current_balance}}</span>
+          <b>RWF {{userStatistics?.balance - (userStatistics?.totalWithdraws || 0) | number}}</b>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

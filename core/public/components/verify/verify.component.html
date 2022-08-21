@@ -1,0 +1,45 @@
+<div class="login-wrapper">
+  <div class="row justify-content-center align-items-center h-100">
+    <div class="col-xl-5 col-lg-6 col-md-8 col-sm-12 p-0">
+      <div class="card rd-13 w-75 card-sh">
+        <div class="card-body">
+          <ng-container *ngIf="isLoading">
+            <div class="d-flex h-100 w-100 justify-content-center align-items-center min-h-50">
+              <irpv-spinner [large]="true"></irpv-spinner>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="!isLoading">
+            <h4 class="font-weight-bold mb-3 d-flex justify-content-center align-items-center" *ngIf="isReport"
+              [ngClass]="{'text-success': isValid , 'text-danger': !isValid}">
+              <ng-container *ngIf="isValid">
+                <i-feather name="check-circle"></i-feather> <span class="ml-2">{{translations.report_is_valid}}</span>
+                <br />
+                <span class="ml-2">Report number: {{docNumber}}</span>
+              </ng-container>
+              <ng-container *ngIf="!isValid">
+                <i-feather name="slash"></i-feather> <span class="ml-2">{{translations.report_is_not_authentic}}</span>
+              </ng-container>
+            </h4>
+            <h4 class="font-weight-bold mb-3 text-success d-flex justify-content-center align-items-center"
+              *ngIf="!isReport" [ngClass]="{'text-success': isValid , 'text-danger': !isValid}">
+              <ng-container *ngIf="isValid">
+                <i-feather name="check-circle"></i-feather> <span
+                  class="ml-2">{{translations.receipt_is_authenticated}}</span><br />
+                <span class="ml-2">Receipt number: {{docNumber}}</span>
+              </ng-container>
+              <ng-container *ngIf="!isValid">
+                <i-feather name="slash"></i-feather> <span class="ml-2">{{translations.receipt_is_not_authentic}}</span>
+              </ng-container>
+            </h4>
+            <div class="card-content">
+              <div class="d-flex justify-content-center align-items-center w-100 verified">
+                <img src="/assets/illustrations/verified.png" alt="verified" *ngIf="isValid">
+                <img src="/assets/illustrations/not-verified.png" alt="not verified" *ngIf="!isValid">
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

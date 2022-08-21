@@ -1,0 +1,44 @@
+<div class="row justify-content-center">
+  <div class="col-12">
+    <app-message *ngIf="message" [message]="message.message" [error]="message.error"></app-message>
+  </div>
+</div>
+<div class="row" *ngIf="requestsTable?.data?.length > 0">
+  <div class="col-lg-5 col-md-5 col-sm-12">
+    <div class="d-flex align-items-center justify-content-start">
+      <div class="sort-item">
+        <h4 class="font-weight-bold">{{translations.your_requests}}</h4>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7 col-md-7 col-sm-12">
+    <div class="d-flex justify-content-end">
+      <div class="sort-item" *ngIf="isBailiff || isAdmin">
+        <irpv-button [label]="translations.create" (onClick)="createRequest()"
+          [className]="'btn btn-primary justify-content-center'"></irpv-button>
+      </div>
+      <div class="sort-item">
+        <irpv-date-filter (onSubmit)="filterByDates($event)" [startDate]="searchForm.startDate"
+          [endDate]="searchForm.endDate" (onRefresh)="refresh($event)">
+        </irpv-date-filter>
+      </div>
+      <div class="sort-item">
+        <irpv-status-display [isFilter]="true" [type]="requestsTable?.filterType" (onSelected)="filterResults($event)">
+        </irpv-status-display>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="table-responsive mt-3">
+      <irpv-table [isFiltering]="tableFiltering" [dataSource]="requestsTable" [loading]="isFetching"
+        (notFoundEvent)="createRequest()" (onRefreshEvent)="refresh()">
+      </irpv-table>
+    </div>
+  </div>
+</div>
+<div class="row paginator">
+  <irpv-paginator (onPageSelect)="onPagination($event)" [dataSourceLength]="requestsTable?.data.length"
+    [currentPage]="requestsTable?.page"></irpv-paginator>
+</div>

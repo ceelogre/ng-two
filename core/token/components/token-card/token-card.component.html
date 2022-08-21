@@ -1,0 +1,40 @@
+<div class="row">
+  <div class="card token-bg rd-13 widget-flat w-100">
+    <div class="card-body p-0">
+      <app-message [error]="error" [message]="message"></app-message>
+      <div class="p-3 pb-0 text-white">
+        <h6 class="text-white">{{translations.balance}}</h6>
+        <h1 class="mt-2 text-white f-44 font-weight-bold">{{userStatistics?.totalTickets}} Tokens </h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-2">
+  <div class="card rd-13 w-100 card-sh">
+    <div class="card-body">
+      <h4 class="font-weight-bold mb-3">{{translations.get_tokens}}</h4>
+      <div class="card-content">
+        <div>
+          <label>{{translations.province}}</label>
+          <irpv-select [isFilter]="false" [data]="provinces" [label]="'name'" [value]="'id'"
+            [placeholder]="translations.select_province" (onSelected)="setCurrentProvince($event)"></irpv-select>
+        </div>
+      </div>
+      <form [formGroup]="tokenFormGroup">
+        <div class="d-flex align-items-end justify-content-between mt-2">
+          <div class="form-group w-40">
+            <label>{{translations.number}}</label>
+            <input type="number" [min]="1" class="form-control" formControlName="numberOfTicketFormCtrl"
+              [placeholder]="translations.number">
+          </div>
+          <div class="form-group w-50">
+            <irpv-button [label]="translations.buy_token" [loading]="isFetching" [disabled]="!currentProvinceId"
+              [className]="'btn btn-primary w-100 justify-content-center'" (onClick)="buy()">
+            </irpv-button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

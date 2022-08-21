@@ -1,0 +1,50 @@
+.inner {
+  position: absolute;
+  top: .6rem;
+  left: 4%;
+}
+
+.parcel .search {
+  padding-left: 2.4rem !important;
+  padding-right: 2.2rem !important;
+}
+
+.parcel .inner {
+  position: absolute !important;
+  top: 0.7rem !important;
+  left: 4%;
+}
+
+.parcel .ui-spinner {
+  position: absolute !important;
+  right: 0.4rem;
+  top: 0.4rem;
+}
+
+.parcel .ui-spinner-2 {
+  position: absolute !important;
+  right: 4%;
+  top: .6rem;
+}
+
+.parcel-details span {
+  padding: .3rem 0;
+}
+
+.parcel-details.preview span{
+  font-weight: bold !important;
+}
+
+.parcel-details.preview b{
+  font-weight: normal !important;
+  font-style: italic !important;
+}
+
+.placeholder-img {
+  height: 50% !important;
+  margin-top: 1rem;
+}
+
+table.valuation-counter th, table.valuation-counter td {
+  padding-right: 2.2rem !important
+}

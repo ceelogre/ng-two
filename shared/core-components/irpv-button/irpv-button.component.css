@@ -1,0 +1,20 @@
+span > irpv-spinner {
+  margin-bottom: -6px !important;
+}
+
+.button-icon {
+  width: 14px !important;
+  height: 14px !important;
+  margin-top: -1px;
+}
+
+
+.parcel-c .button-icon {
+  width: 18px !important;
+  height: 18px !important;
+  margin-top: -6px !important;
+}
+
+button.parcel-c {
+  padding: 6px !important;
+}
